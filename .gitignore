@@ -1,0 +1,19 @@
+# Cartelle di build
+build/
+build-*/
+out/
+
+# File generati da CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+Testing/
+compile_commands.json
+
+# Editor
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
