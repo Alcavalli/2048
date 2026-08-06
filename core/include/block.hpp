@@ -4,5 +4,5 @@
 
 struct Block
 {
-    int value{Constants::MIN_VALUE};
+    int value{};
 };

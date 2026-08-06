@@ -7,3 +7,11 @@ enum class GameStatus
     Win,
     Lose
 };
+
+enum class Swipe
+{
+    Up,
+    Down,
+    Right,
+    Left
+};
