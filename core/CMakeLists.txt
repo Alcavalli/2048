@@ -1,6 +1,6 @@
 # Libreria con la logica di gioco — nessuna dipendenza da Emscripten qui dentro
 add_library(game2048_core
-    # aggiungi qui ogni nuovo .cpp man mano che lo crei
+    src/grid.cpp
 )
 
 target_include_directories(game2048_core PUBLIC include)

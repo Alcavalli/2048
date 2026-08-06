@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Constants.hpp"
 #include "Enums.hpp"
 #include "block.hpp"
 #include <array>
@@ -14,7 +13,7 @@ class Grid
     public:
         Grid();
         const std::optional<Block> getSquare(int row, int col) const;
-        void setSquare(int row, int col, int val);
+        void setSquare(int row, int col, std::optional<Block>);
         void spawnBlock();
         const std::vector<std::pair<int, int>> checkGrid() const;
         void applyMove(Swipe move);

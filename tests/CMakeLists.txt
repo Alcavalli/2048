@@ -1,5 +1,5 @@
 add_executable(game2048_tests
-    # aggiungi qui i prossimi file di test
+    test_grid.cpp
 )
 
 target_link_libraries(game2048_tests PRIVATE game2048_core)
