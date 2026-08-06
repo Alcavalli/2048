@@ -4,9 +4,9 @@
 #include <ctime>
 #include <cassert>
 
-std::mt19937 rng(time(0));
+static std::mt19937 rng(std::random_device{}());
 
-std::pair<int, int> randomEmptySquare(const std::vector<std::pair<int, int>>& empty_squares)
+static Position randomEmptySquare(const std::vector<Position>& empty_squares)
 {
     assert(empty_squares.size() > 0);
 
@@ -22,15 +22,15 @@ Grid::Grid()
 
 void Grid::spawnBlock()
 {
-    std::pair<int, int> sq{randomEmptySquare(checkGrid())};
+    Position sq{randomEmptySquare(checkEmptySquares())};
 
     std::uniform_int_distribution<int> dis_value(0, Constants::TWO_SPAWN_RATE + Constants::FOUR_SPAWN_RATE);    // 0-9
     std::optional<Block> value{Block{dis_value(rng) < Constants::FOUR_SPAWN_RATE ? Constants::MIN_VALUE * 2 : Constants::MIN_VALUE}};
 
-    setSquare(sq.first, sq.second, value);
+    setSquare(sq.row, sq.col, value);
 }
 
-const std::optional<Block> Grid::getSquare(int row, int col) const
+std::optional<Block> Grid::getSquare(int row, int col) const
 {
     assert(row >= 0 && row < Constants::GRID_DIM);
     assert(col >= 0 && col < Constants::GRID_DIM);
@@ -46,9 +46,9 @@ void Grid::setSquare(int row, int col, std::optional<Block> val)
     grid[row][col] = val;
 }
 
-const std::vector<std::pair<int, int>> Grid::checkGrid() const
+std::vector<Position> Grid::checkEmptySquares() const
 {
-    std::vector<std::pair<int, int>> check_squares;
+    std::vector<Position> check_squares;
     for (int i{}; i < Constants::GRID_DIM; ++i)
         for (int j{}; j < Constants::GRID_DIM; ++j)
             if (getSquare(i, j) == std::nullopt)
@@ -56,41 +56,53 @@ const std::vector<std::pair<int, int>> Grid::checkGrid() const
     return check_squares;
 }
 
-void checkMove(std::array<std::optional<Block>, Constants::GRID_DIM>& array)
+static void compactTiles(std::array<std::optional<Block>, Constants::GRID_DIM>& line)
 {
     for (int i{}; ++i < Constants::GRID_DIM; )
     {
-        bool check{false};
-        if (array[i] == std::nullopt)   continue;
+        if (line[i] == std::nullopt)    continue;
         for (int j{i}; j > 0; --j)
         {
-            if (array[j - 1] == std::nullopt && j > 1)  continue;
-            if (array[j - 1] == std::nullopt)
+            if (line[j - 1] == std::nullopt && j > 1)   continue;
+            if (line[j - 1] == std::nullopt)
             {
-                array[0] = array[i];
-                check = true;
-                break;
-            }
-            else if (array[j - 1].value().value == array[i].value().value)
-            {
-                array[j - 1].value().value *= 2;
-                check = true;
+                line[0] = line[i];
+                line[i] = std::nullopt;
                 break;
             }
             else
             {
-                array[j] = array[i];
-                check = (j != i);
+                line[j] = line[i];
+                if (j != i) line[i] = std::nullopt;
                 break;
             }
         }
-        if (check)
-            array[i] = std::nullopt;
     }
 }
 
-void Grid::applyMove(Swipe move)
+static void mergeTiles(std::array<std::optional<Block>, Constants::GRID_DIM>& line)
 {
+    for (int i{}; i < Constants::GRID_DIM - 1; ++i)
+    {
+        if (line[i] == std::nullopt || line[i + 1] == std::nullopt) continue;
+        if (line[i].value().value == line[i + 1].value().value)
+        {
+            line[i].value().merge();
+            line[i + 1] = std::nullopt;
+        }
+    }
+}
+
+static void checkMove(std::array<std::optional<Block>, Constants::GRID_DIM>& line)
+{
+    compactTiles(line);
+    mergeTiles(line);
+    compactTiles(line);
+}
+
+bool Grid::applyMove(Swipe move)
+{
+    std::array<std::array<std::optional<Block>, Constants::GRID_DIM>, Constants::GRID_DIM> check = grid;
     switch(move)
     {
         case Swipe::Up:
@@ -152,4 +164,5 @@ void Grid::applyMove(Swipe move)
         default:
             assert(false);
     }
+    return !(check == grid);
 }

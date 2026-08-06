@@ -1,20 +1,23 @@
 #pragma once
 
-#include "Enums.hpp"
-#include "block.hpp"
 #include <array>
 #include <optional>
 #include <vector>
+#include "Enums.hpp"
+#include "block.hpp"
+#include "Constants.hpp"
+
+struct Position { int row{}, col{}; };
 
 class Grid
 {
     private:
-        std::array<std::array<std::optional<Block>, Constants::GRID_DIM>, Constants::GRID_DIM> grid{std::nullopt};
+        std::array<std::array<std::optional<Block>, Constants::GRID_DIM>, Constants::GRID_DIM> grid{};
     public:
         Grid();
-        const std::optional<Block> getSquare(int row, int col) const;
+        std::optional<Block> getSquare(int row, int col) const;
         void setSquare(int row, int col, std::optional<Block>);
         void spawnBlock();
-        const std::vector<std::pair<int, int>> checkGrid() const;
-        void applyMove(Swipe move);
+        std::vector<Position> checkEmptySquares() const;
+        bool applyMove(Swipe move);
 };
