@@ -80,29 +80,33 @@ static void compactTiles(std::array<std::optional<Block>, Constants::GRID_DIM>& 
     }
 }
 
-static void mergeTiles(std::array<std::optional<Block>, Constants::GRID_DIM>& line)
+static int mergeTiles(std::array<std::optional<Block>, Constants::GRID_DIM>& line)
 {
+    int points{};
     for (int i{}; i < Constants::GRID_DIM - 1; ++i)
     {
         if (line[i] == std::nullopt || line[i + 1] == std::nullopt) continue;
-        if (line[i].value().value == line[i + 1].value().value)
+        if (line[i]->value == line[i + 1]->value)
         {
-            line[i].value().merge();
+            line[i]->merge();
+            points += line[i]->value;
             line[i + 1] = std::nullopt;
         }
     }
+    return points;
 }
 
-static void checkMove(std::array<std::optional<Block>, Constants::GRID_DIM>& line)
+static int checkMove(std::array<std::optional<Block>, Constants::GRID_DIM>& line)
 {
     compactTiles(line);
-    mergeTiles(line);
+    int points{mergeTiles(line)};
     compactTiles(line);
+    return points;
 }
 
-bool Grid::applyMove(Swipe move)
+bl_array Grid::tryMove(Swipe move, int& points) const
 {
-    std::array<std::array<std::optional<Block>, Constants::GRID_DIM>, Constants::GRID_DIM> check = grid;
+    bl_array grid_temp;
     switch(move)
     {
         case Swipe::Up:
@@ -112,9 +116,9 @@ bool Grid::applyMove(Swipe move)
                 std::array<std::optional<Block>, Constants::GRID_DIM> temp;
                 for (int i{}; i < Constants::GRID_DIM; ++i)
                     temp[i] = getSquare(i, j);
-                checkMove(temp);
+                points += checkMove(temp);
                 for (int i{}; i < Constants::GRID_DIM; ++i)
-                    setSquare(i, j, temp[i]);
+                    grid_temp[i][j] = temp[i];
             }
             break;
         }
@@ -126,9 +130,9 @@ bool Grid::applyMove(Swipe move)
                 std::array<std::optional<Block>, Constants::GRID_DIM> temp;
                 for (int i{}; i < Constants::GRID_DIM; ++i)
                     temp[i] = getSquare(Constants::GRID_DIM - 1 - i, j);
-                checkMove(temp);
+                points += checkMove(temp);
                 for (int i{}; i < Constants::GRID_DIM; ++i)
-                    setSquare(Constants::GRID_DIM - 1 - i, j, temp[i]);
+                    grid_temp[Constants::GRID_DIM - 1 - i][j] = temp[i];
             }
             break;
         }
@@ -140,9 +144,9 @@ bool Grid::applyMove(Swipe move)
                 std::array<std::optional<Block>, Constants::GRID_DIM> temp;
                 for (int j{}; j < Constants::GRID_DIM; ++j)
                     temp[j] = getSquare(i, Constants::GRID_DIM - 1 - j);
-                checkMove(temp);
+                points += checkMove(temp);
                 for (int j{}; j < Constants::GRID_DIM; ++j)
-                    setSquare(i, Constants::GRID_DIM - 1 - j, temp[j]);
+                    grid_temp[i][Constants::GRID_DIM - 1 - j] = temp[j];
             }
             break;
         }
@@ -154,15 +158,58 @@ bool Grid::applyMove(Swipe move)
                 std::array<std::optional<Block>, Constants::GRID_DIM> temp;
                 for (int j{}; j < Constants::GRID_DIM; ++j)
                     temp[j] = getSquare(i, j);
-                checkMove(temp);
+                points += checkMove(temp);
                 for (int j{}; j < Constants::GRID_DIM; ++j)
-                    setSquare(i, j, temp[j]);
+                    grid_temp[i][j] = temp[j];
             }
             break;
         }
-
-        default:
-            assert(false);
     }
-    return !(check == grid);
+    return grid_temp;
+}
+
+bool Grid::applyMove(Swipe move)
+{
+    bl_array checking{tryMove(move, score)};
+    if (checking != grid)
+    {
+        grid = checking;
+        return true;
+    }
+    return false;
+}
+
+int Grid::getScore() const { return score; }
+
+bool Grid::isWin() const
+{
+    for (int i{}; i < Constants::GRID_DIM; ++i)
+        for (int j{}; j < Constants::GRID_DIM; ++j)
+        {
+            auto sq{getSquare(i, j)};
+            if (sq.has_value() && sq->value == Constants::MAX_VALUE) return true;
+        }
+    return false;
+}
+
+bool Grid::isLose() const
+{
+    int pnt{};
+    if (tryMove(Swipe::Up, pnt) != grid)
+    {
+        return false;
+    }
+    else if (tryMove(Swipe::Down, pnt) != grid)
+    {
+        return false;
+    }
+    else if (tryMove(Swipe::Left, pnt) != grid)
+    {
+        return false;
+    }
+    else if (tryMove(Swipe::Right, pnt) != grid)
+    {
+        return false;
+    }
+    return true;
 }
