@@ -213,3 +213,5 @@ bool Grid::isLose() const
     }
     return true;
 }
+
+const bl_array& Grid::getGrid() const { return grid; }

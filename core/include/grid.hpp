@@ -27,4 +27,5 @@ class Grid
         int getScore() const;
         bool isWin() const;
         bool isLose() const;
+        const bl_array& getGrid() const;
 };
