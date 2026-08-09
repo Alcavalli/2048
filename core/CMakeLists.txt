@@ -15,6 +15,7 @@ if(EMSCRIPTEN)
         "-sEXPORT_ES6=1"
         "-sEXPORTED_RUNTIME_METHODS=[\"ccall\",\"cwrap\"]"
         "-sALLOW_MEMORY_GROWTH=1"
+        "--bind"
     )
     set_target_properties(game2048_wasm PROPERTIES
         OUTPUT_NAME "game2048"
