@@ -28,7 +28,7 @@ let blocks = document.querySelectorAll(".cell");
     if (event.key in keyToSwipe)
     {
         event.preventDefault();
-        get_run = Module.run(keyToSwipe[event.key]);
+        get_run = Module.runGame(keyToSwipe[event.key]);
         renderBoard();
         if (get_run === "Win" || get_run === "Lose")    renderGameOver(get_run);
     }
@@ -51,8 +51,10 @@ function renderBoard()
 {
     let board = Module.getBoard();
     for (let i = 0; i < 16; i++)
-        if (board.get(i) !== 0)
-            blocks[i].textContent = (board.get(i) === 0 ? "" : board.get(i));
+    {
+        blocks[i].textContent = (board.get(i) === 0 ? "" : board.get(i));
+        if (board.get(i) === 64)    blocks[i].textContent = 67;
+    }
 }
 
 function renderGameOver(result)

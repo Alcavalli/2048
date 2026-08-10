@@ -9,7 +9,7 @@ static Game game{};
 
 void startGame() { game.startGame(); }
 
-std::string run(int m)
+std::string runGame(int m)
 {
     Swipe move{Swipe::Up};
     switch (m)
@@ -63,7 +63,7 @@ EMSCRIPTEN_BINDINGS(module)
     register_vector<int>("VectorInt");
 
     function("startGame", &startGame);
-    function("run", &run);
+    function("runGame", &runGame);
     function("getScore", &getScore);
     function("getGameStatus", &getGameStatus);
     function("getBoard", &getBoard);
