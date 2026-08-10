@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--? Better rendering for mobile devices -->
+        <title>2048</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div id="screen-menu">
+            <h1>2048</h1>
+            <h4>By Cavalli 🐎</h4>
+            <button id="button-play" style="background-color: yellow">PLAY</button>
+        </div>
+
+        <div id="screen-game" class="hidden">
+            <div id="board">
+                <div id="block-0" class="cell"></div>
+                <div id="block-1" class="cell"></div>
+                <div id="block-2" class="cell"></div>
+                <div id="block-3" class="cell"></div>
+                <div id="block-4" class="cell"></div>
+                <div id="block-5" class="cell"></div>
+                <div id="block-6" class="cell"></div>
+                <div id="block-7" class="cell"></div>
+                <div id="block-8" class="cell"></div>
+                <div id="block-9" class="cell"></div>
+                <div id="block-10" class="cell"></div>
+                <div id="block-11" class="cell"></div>
+                <div id="block-12" class="cell"></div>
+                <div id="block-13" class="cell"></div>
+                <div id="block-14" class="cell"></div>
+                <div id="block-15" class="cell"></div>
+            </div>
+
+            <div id="screen-game_over" class="hidden">
+                <button id="close-overlay">✕</button>
+                <button id="button-play_again" style="background-color: yellow"> PLAY AGAIN </button>
+                <h3 id="text-game_over"></h3>
+            </div>
+        </div>
+
+        <script src="wasm/game2048.js"></script>
+        <script type="module" src="script.js"></script>
+    </body>
+</html>
