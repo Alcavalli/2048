@@ -1,15 +1,13 @@
 import createModule from './wasm/game2048.js';
 
 const Module = await createModule();
-let sc_menu = document.getElementById("screen-menu");
-let sc_game = document.getElementById("screen-game");
-let sc_board = document.getElementById("board");
 let sc_game_over = document.getElementById("screen-game_over");
 let btn_play = document.getElementById("button-play");
 let btn_play_again = document.getElementById("button-play_again");
 let btn_close = document.getElementById("close-overlay");
 let text_game_over = document.getElementById("text-game_over");
 let blocks = document.querySelectorAll(".cell");
+let score = document.getElementById("score");
 
 {
     btn_play.addEventListener("click", () => { renderGame(); });
@@ -55,6 +53,7 @@ function renderBoard()
         blocks[i].textContent = (board.get(i) === 0 ? "" : board.get(i));
         if (board.get(i) === 64)    blocks[i].textContent = 67;
     }
+    score.textContent = "Score: " + Module.getScore();
 }
 
 function renderGameOver(result)
@@ -63,7 +62,7 @@ function renderGameOver(result)
         text_game_over.textContent = "Hai vinto!";
     else
         text_game_over.textContent = "Hai perso!";
-    showScreen("game_over");
+    document.getElementById("screen-game_over").classList.remove("hidden");
 }
 
 function showScreen(id)
