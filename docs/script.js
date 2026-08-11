@@ -583,23 +583,37 @@ function renderGame()
 
 
 // ============================================================
+// UTILS
+// ============================================================
+
+function countValues(values)
+{
+    const counts = new Map();
+
+    for (const value of values)
+    {
+        if (value === 0) continue;
+
+        counts.set(value, (counts.get(value) || 0) + 1);
+    }
+
+    return counts;
+}
+
+
+// ============================================================
 // RENDER BOARD
 // ============================================================
 
 function renderBoard(direction = null)
 {
-    const board =
-        Module.getBoard();
-
+    const board = Module.getBoard();
 
     let normalMerge = false;
     let specialMerge = false;
-
     let specialValue = 0;
 
-
-    const currentBoard =
-        new Array(16);
+    const currentBoard = new Array(16);
 
 
     // ========================================================
@@ -607,13 +621,45 @@ function renderBoard(direction = null)
     // ========================================================
 
     for (let i = 0; i < 16; i++)
+        currentBoard[i] = board.get(i);
+
+
+    // ========================================================
+    // QUALI VALORI SONO "IN PIÙ" RISPETTO A PRIMA (= MERGE)
+    // ========================================================
+
+    /*
+     * Confronto quanti "2", "4", "8"... c'erano prima e quanti
+     * ce ne sono ora. Se un valore compare più volte, quella/e
+     * copia/e in più può/possono venire solo da un merge — uno
+     * spawn produce solo 2 o 4, mai valori più alti.
+     *
+     * Il valore minimo (2) lo escludo sempre: può nascere solo
+     * da uno spawn, mai da un merge (il minimo merge possibile
+     * è 2+2=4). Il valore 4 resta un'ambiguità rara e accettata
+     * (potrebbe essere sia un merge che uno spawn casuale di 4),
+     * ma capita raramente e l'effetto è comunque solo estetico.
+     *
+     * direction === null solo al primo giro (board iniziale),
+     * dove ovviamente non c'è nessun merge da rilevare.
+     */
+
+    const mergeBudget = new Map();
+
+    if (direction !== null)
     {
-        const rawValue =
-            board.get(i);
+        const prevCounts = countValues(previousBoard);
+        const currCounts = countValues(currentBoard);
 
+        for (const [value, count] of currCounts)
+        {
+            if (value === 2) continue;
 
-        currentBoard[i] =
-            rawValue;
+            const prevCount = prevCounts.get(value) || 0;
+
+            if (count > prevCount)
+                mergeBudget.set(value, count - prevCount);
+        }
     }
 
 
@@ -623,184 +669,84 @@ function renderBoard(direction = null)
 
     for (let i = 0; i < 16; i++)
     {
-        const rawValue =
-            currentBoard[i];
+        const rawValue = currentBoard[i];
+
+        const displayValue = rawValue === 64 ? 67 : rawValue;
+
+        const previousValue = previousBoard[i];
+
+        const cell = blocks[i];
 
 
-        /*
-         * 64 viene mostrato come 67.
-         */
-
-        const displayValue =
-            rawValue === 64
-                ? 67
-                : rawValue;
-
-
-        const previousValue =
-            previousBoard[i];
-
-
-        const cell =
-            blocks[i];
-
-
-        // ----------------------------------------------------
         // CONTENT
-        // ----------------------------------------------------
-
-        cell.textContent =
-            displayValue === 0
-                ? ""
-                : displayValue;
+        cell.textContent = displayValue === 0 ? "" : displayValue;
 
 
-        // ----------------------------------------------------
         // CSS VALUE
-        // ----------------------------------------------------
-
-        if (displayValue > 0)
-        {
-            cell.dataset.value =
-                displayValue;
-        }
-        else
-        {
-            delete cell.dataset.value;
-        }
+        if (displayValue > 0) cell.dataset.value = displayValue;
+        else delete cell.dataset.value;
 
 
-        // ----------------------------------------------------
         // RESET ANIMATIONS
-        // ----------------------------------------------------
-
         cell.classList.remove(
-            "slide-up",
-            "slide-down",
-            "slide-left",
-            "slide-right",
-            "merge-pop",
-            "special-merge",
-            "tile-spawn"
+            "slide-up", "slide-down", "slide-left", "slide-right",
+            "merge-pop", "special-merge", "tile-spawn"
         );
-
-
-        /*
-         * Forza un reflow.
-         * Serve per permettere di ripetere
-         * la stessa animazione consecutivamente.
-         */
 
         void cell.offsetWidth;
 
 
-        // ----------------------------------------------------
-        // TILE APPENA CREATA
-        // ----------------------------------------------------
+        // QUESTA CELLA È IL PRODOTTO DI UN MERGE APPENA AVVENUTO?
+        let isMergeCell = false;
 
-        if (
-            rawValue !== 0 &&
-            previousValue === 0
-        )
+        if (rawValue !== 0)
         {
-            cell.classList.add(
-                "tile-spawn"
-            );
+            const budget = mergeBudget.get(rawValue);
+
+            // "Candidata" solo se il valore qui è davvero cambiato
+            // rispetto a prima (non è una tile ferma, immutata)
+            if (budget && previousValue !== rawValue)
+            {
+                isMergeCell = true;
+
+                if (budget > 1) mergeBudget.set(rawValue, budget - 1);
+                else mergeBudget.delete(rawValue);
+            }
         }
 
 
-        // ----------------------------------------------------
+        // TILE APPENA CREATA (solo se non è in realtà un merge)
+        if (rawValue !== 0 && previousValue === 0 && !isMergeCell)
+            cell.classList.add("tile-spawn");
+
+
         // SLIDE
-        // ----------------------------------------------------
-
-        if (
-            direction !== null &&
-            rawValue !== 0
-        )
+        if (direction !== null && rawValue !== 0)
         {
-            if (direction === 0)
-            {
-                cell.classList.add(
-                    "slide-up"
-                );
-            }
-
-            else if (direction === 1)
-            {
-                cell.classList.add(
-                    "slide-down"
-                );
-            }
-
-            else if (direction === 2)
-            {
-                cell.classList.add(
-                    "slide-right"
-                );
-            }
-
-            else if (direction === 3)
-            {
-                cell.classList.add(
-                    "slide-left"
-                );
-            }
+            if (direction === 0) cell.classList.add("slide-up");
+            else if (direction === 1) cell.classList.add("slide-down");
+            else if (direction === 2) cell.classList.add("slide-right");
+            else if (direction === 3) cell.classList.add("slide-left");
         }
 
 
-        // ----------------------------------------------------
         // MERGE
-        // ----------------------------------------------------
-
-        /*
-         * Questo è volutamente semplice perché
-         * la logica del merge è nel C++.
-         *
-         * Se il valore attuale è il doppio del
-         * precedente nella stessa posizione,
-         * trattiamo la tile come merge.
-         */
-
-        if (
-            previousValue > 0 &&
-            rawValue === previousValue * 2
-        )
+        if (isMergeCell)
         {
-            /*
-             * Nuovo valore mai prodotto tramite merge
-             * in questa partita.
-             */
-
-            if (
-                !mergedValues.has(displayValue)
-            )
+            if (!mergedValues.has(displayValue))
             {
                 specialMerge = true;
+                specialValue = Math.max(specialValue, displayValue);
 
-                specialValue =
-                    Math.max(
-                        specialValue,
-                        displayValue
-                    );
+                cell.classList.add("special-merge");
 
-
-                cell.classList.add(
-                    "special-merge"
-                );
-
-
-                mergedValues.add(
-                    displayValue
-                );
+                mergedValues.add(displayValue);
             }
-
             else
             {
                 normalMerge = true;
 
-                cell.classList.add(
-                    "merge-pop"
-                );
+                cell.classList.add("merge-pop");
             }
         }
     }
@@ -812,44 +758,16 @@ function renderBoard(direction = null)
 
     if (specialMerge)
     {
-        SoundSystem.play(
-            "newTile",
-            specialValue
-        );
-
-
-        /*
-         * Pattern:
-         *
-         * vibra
-         * pausa
-         * vibra più lunga
-         */
-
-        vibrate([
-            35,
-            25,
-            70
-        ]);
+        SoundSystem.play("newTile", specialValue);
+        vibrate([35, 25, 70]);
     }
-
     else if (normalMerge)
     {
-        SoundSystem.play(
-            "merge"
-        );
-
-
+        SoundSystem.play("merge");
         vibrate(25);
     }
-
     else if (direction !== null)
     {
-        /*
-         * Movimento normale:
-         * vibrazione appena percettibile.
-         */
-
         vibrate(8);
     }
 
@@ -858,17 +776,16 @@ function renderBoard(direction = null)
     // SAVE BOARD
     // ========================================================
 
-    previousBoard =
-        currentBoard;
+    previousBoard = currentBoard;
 
 
     // ========================================================
     // SCORE
     // ========================================================
 
-    score.textContent =
-        Module.getScore()
-            .toLocaleString("it-IT");
+    score.textContent = Module.getScore().toLocaleString("it-IT");
+
+    board.delete();
 }
 
 
