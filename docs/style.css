@@ -1,28 +1,1996 @@
-.hidden {
-    display: none;
+/* ============================================================
+   FONTS
+============================================================ */
+
+@import url(
+    'https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Fredoka:wght@600;700&display=swap'
+);
+
+
+/* ============================================================
+   VARIABLES
+============================================================ */
+
+:root {
+
+    --bg-dark: #08081a;
+    --bg-mid: #151132;
+
+    --purple: #8065ed;
+    --purple-light: #b9a8ff;
+
+    --blue: #55cfff;
+    --cyan: #73e7ff;
+
+    --text: #f7f5ff;
+    --text-soft: #aaa5c9;
+
+    --screen-bg: rgba(27, 21, 59, 0.62);
+
+    --board:
+        linear-gradient(
+            145deg,
+            rgba(82, 65, 145, 0.82),
+            rgba(37, 33, 82, 0.92)
+        );
+
+    --radius: 20px;
 }
 
-#board {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr);
-    gap: 10px;
-    width: 400px;
-    height: 400px;
-    background-color: #999;
-    padding: 10px;
+
+/* ============================================================
+   RESET
+============================================================ */
+
+* {
+
     box-sizing: border-box;
+
+    margin: 0;
+    padding: 0;
+
+    user-select: none;
+
+    -webkit-user-select: none;
+
+    -webkit-tap-highlight-color: transparent;
 }
 
-.cell {
-    background-color: #ccc;
+
+html,
+body {
+
+    width: 100%;
+    min-height: 100%;
+}
+
+
+body {
+
+    min-height: 100vh;
+
     display: flex;
+
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    font-weight: bold;
+
+    padding: 18px;
+
+    overflow-x: hidden;
+
+    color: var(--text);
+
+    font-family:
+        "Outfit",
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+
+    background:
+
+        radial-gradient(
+            circle at 20% 15%,
+            rgba(116, 82, 231, 0.25),
+            transparent 32%
+        ),
+
+        radial-gradient(
+            circle at 80% 85%,
+            rgba(48, 177, 232, 0.18),
+            transparent 35%
+        ),
+
+        radial-gradient(
+            circle at 50% 50%,
+            #19153d,
+            var(--bg-dark) 72%
+        );
 }
 
+
+/* ============================================================
+   BACKGROUND DECORATION
+============================================================ */
+
+.background-decor {
+
+    position: fixed;
+
+    inset: 0;
+
+    overflow: hidden;
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+.glow-orb {
+
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(90px);
+
+    opacity: 0.32;
+
+    animation:
+        orbFloat 7s ease-in-out infinite alternate;
+}
+
+
+.orb-1 {
+
+    width: 360px;
+    height: 360px;
+
+    top: -120px;
+    left: -100px;
+
+    background: #7046cf;
+}
+
+
+.orb-2 {
+
+    width: 430px;
+    height: 430px;
+
+    right: -150px;
+    bottom: -150px;
+
+    background: #257da8;
+
+    animation-delay: -3s;
+}
+
+
+/* ------------------------------------------------------------
+   SPARKLES
+------------------------------------------------------------ */
+
+.sparkle {
+
+    position: absolute;
+
+    color:
+        rgba(
+            220,
+            213,
+            255,
+            0.28
+        );
+
+    font-size: 20px;
+
+    animation:
+        sparkleFloat
+        4.5s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+.sparkle-1 {
+
+    top: 13%;
+    left: 16%;
+
+    font-size: 23px;
+}
+
+
+.sparkle-2 {
+
+    top: 70%;
+    left: 9%;
+
+    font-size: 17px;
+
+    animation-delay: -1.5s;
+}
+
+
+.sparkle-3 {
+
+    top: 19%;
+    right: 14%;
+
+    font-size: 27px;
+
+    animation-delay: -2.5s;
+}
+
+
+.sparkle-4 {
+
+    bottom: 14%;
+    right: 17%;
+
+    font-size: 19px;
+
+    animation-delay: -0.8s;
+}
+
+
+/* ============================================================
+   APPLICATION
+============================================================ */
+
+.app-container {
+
+    position: relative;
+
+    z-index: 5;
+
+    width: 100%;
+
+    max-width: 480px;
+
+    padding: 10px;
+}
+
+
+/* ============================================================
+   SCREEN CARD
+============================================================ */
+
+.screen-card {
+
+    position: relative;
+
+    width: 100%;
+
+    padding: 25px 22px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 14px;
+
+    border-radius: 28px;
+
+    border:
+        1px solid
+        rgba(
+            190,
+            177,
+            255,
+            0.18
+        );
+
+    background:
+        var(--screen-bg);
+
+    backdrop-filter: blur(18px);
+
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+
+        0 28px 70px
+        rgba(0, 0, 0, 0.48),
+
+        inset 0 1px 1px
+        rgba(255, 255, 255, 0.10);
+
+    animation:
+        screenAppear
+        0.45s
+        ease-out;
+}
+
+
+.hidden {
+
+    display: none !important;
+}
+
+
+/* ============================================================
+   MENU
+============================================================ */
+
+#screen-menu {
+
+    min-height: 530px;
+
+    justify-content: center;
+
+    text-align: center;
+}
+
+
+.menu-content {
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+}
+
+
+.game-logo {
+
+    position: relative;
+
+    font-family:
+        "Fredoka",
+        sans-serif;
+
+    font-size:
+        clamp(
+            80px,
+            19vw,
+            120px
+        );
+
+    line-height: 0.85;
+
+    font-weight: 700;
+
+    letter-spacing: -4px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #c2b1ff 48%,
+            #62dcff
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+
+    filter:
+        drop-shadow(
+            0 5px 18px
+            rgba(126, 101, 235, 0.28)
+        );
+}
+
+
+.logo-sparkle {
+
+    position: absolute;
+
+    top: -17px;
+    right: -25px;
+
+    color: var(--cyan);
+
+    font-size: 25px;
+
+    animation:
+        sparkleFloat
+        3s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+
+#screen-menu h4 {
+
+    margin-top: 28px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 3px;
+
+    color: var(--purple-light);
+}
+
+
+.menu-subtitle {
+
+    margin-top: 8px;
+    margin-bottom: 34px;
+
+    color: var(--text-soft);
+
+    font-size: 13px;
+
+    letter-spacing: 0.6px;
+}
+
+
+/* ============================================================
+   BUTTON
+============================================================ */
+
+.main-button {
+
+    position: relative;
+
+    min-width: 210px;
+
+    padding: 15px 27px;
+
+    display: inline-flex;
+
+    justify-content: center;
+    align-items: center;
+
+    gap: 12px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    color: white;
+
+    background:
+
+        linear-gradient(
+            110deg,
+            #7053e7,
+            #996cff 48%,
+            #48cbed
+        );
+
+    font-family:
+        "Outfit",
+        sans-serif;
+
+    font-size: 16px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    box-shadow:
+
+        0 12px 30px
+        rgba(108, 78, 226, 0.36);
+
+    overflow: hidden;
+
+    transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        filter 0.18s ease;
+}
+
+
+.main-button::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            110deg,
+            transparent,
+            rgba(255,255,255,0.28),
+            transparent
+        );
+
+    transform:
+        translateX(-110%);
+
+    transition:
+        transform 0.55s ease;
+}
+
+
+.main-button:hover {
+
+    transform:
+        translateY(-3px)
+        scale(1.02);
+
+    box-shadow:
+
+        0 18px 42px
+        rgba(108, 78, 226, 0.52);
+
+    filter: brightness(1.08);
+}
+
+
+.main-button:hover::before {
+
+    transform:
+        translateX(110%);
+}
+
+
+.main-button:active {
+
+    transform:
+        translateY(1px)
+        scale(0.98);
+}
+
+
+.play-icon {
+
+    font-size: 13px;
+
+    opacity: 0.85;
+}
+
+
+/* ============================================================
+   GAME HEADER
+============================================================ */
+
 #screen-game {
+
     touch-action: none;
+
+    padding:
+        21px
+        21px
+        20px;
+}
+
+
+.game-header {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        auto
+        1fr;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+/* ------------------------------------------------------------
+   MENU BUTTON
+------------------------------------------------------------ */
+
+.menu-button {
+
+    justify-self: start;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding:
+        8px
+        11px;
+
+    border:
+        1px solid
+        rgba(
+            207,
+            197,
+            255,
+            0.12
+        );
+
+    border-radius: 11px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.055
+        );
+
+    color: #c8c1e9;
+
+    font-family:
+        "Outfit",
+        sans-serif;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.menu-button:hover {
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.12
+        );
+
+    color: white;
+
+    transform:
+        translateX(-2px);
+}
+
+
+.menu-arrow {
+
+    font-size: 19px;
+
+    line-height: 10px;
+}
+
+
+/* ------------------------------------------------------------
+   GAME TITLE
+------------------------------------------------------------ */
+
+.game-title {
+
+    justify-self: center;
+
+    font-family:
+        "Fredoka",
+        sans-serif;
+
+    font-size: 39px;
+
+    font-weight: 700;
+
+    line-height: 1;
+
+    letter-spacing: -2px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            white,
+            #bcaeff 48%,
+            #63d9ff
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+}
+
+
+/* ------------------------------------------------------------
+   SCORE
+------------------------------------------------------------ */
+
+.score-container {
+
+    justify-self: end;
+
+    min-width: 92px;
+
+    padding:
+        7px
+        13px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    border-radius: 12px;
+
+    border:
+        1px solid
+        rgba(
+            191,
+            178,
+            255,
+            0.15
+        );
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(88, 67, 157, 0.48),
+            rgba(40, 39, 88, 0.58)
+        );
+}
+
+
+.score-label {
+
+    font-size: 8px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.7px;
+
+    color: #aaa4c9;
+}
+
+
+#score {
+
+    margin-top: 1px;
+
+    color: white;
+
+    font-size: 20px;
+
+    line-height: 1.1;
+
+    font-weight: 900;
+}
+
+
+/* ============================================================
+   GAME HINT
+============================================================ */
+
+.game-hint {
+
+    color: #9690b6;
+
+    font-size: 11px;
+
+    letter-spacing: 0.5px;
+
+    text-align: center;
+}
+
+
+.game-hint b {
+
+    color: #c7bfff;
+}
+
+
+/* ============================================================
+   BOARD
+============================================================ */
+
+#board {
+
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    grid-template-rows:
+        repeat(4, 1fr);
+
+    gap: 10px;
+
+    padding: 12px;
+
+    border-radius: 24px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(83, 67, 144, 0.84),
+            rgba(35, 31, 78, 0.94)
+        );
+
+    border:
+        1px solid
+        rgba(
+            202,
+            190,
+            255,
+            0.17
+        );
+
+    box-shadow:
+
+        0 28px 55px
+        rgba(0, 0, 0, 0.42),
+
+        inset 0 1px 0
+        rgba(255,255,255,0.08),
+
+        0 0 40px
+        rgba(111, 83, 227, 0.13);
+}
+
+
+/* ============================================================
+   CELLS
+============================================================ */
+
+.cell {
+
+    position: relative;
+
+    min-width: 0;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 18px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(126, 110, 177, 0.22),
+            rgba(72, 63, 120, 0.20)
+        );
+
+    border:
+        1px solid
+        rgba(
+            215,
+            205,
+            255,
+            0.06
+        );
+
+    color: white;
+
+    font-family:
+        "Fredoka",
+        sans-serif;
+
+    font-size:
+        clamp(
+            20px,
+            7vw,
+            37px
+        );
+
+    font-weight: 700;
+
+    overflow: hidden;
+
+    transition:
+        background 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+
+/* ------------------------------------------------------------
+   TILE SHINE
+------------------------------------------------------------ */
+
+.cell::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    border-radius: inherit;
+
+    pointer-events: none;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,0.18),
+            transparent 36%
+        );
+}
+
+
+/* ============================================================
+   TILE COLORS
+============================================================ */
+
+.cell[data-value="2"] {
+
+    color: #f8f5ff;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #7066b4,
+            #534d8e
+        );
+
+    box-shadow:
+        inset 0 1px 1px
+        rgba(255,255,255,0.15);
+}
+
+
+.cell[data-value="4"] {
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #806dcc,
+            #6250a2
+        );
+
+    box-shadow:
+        0 0 18px
+        rgba(140,110,255,0.18);
+}
+
+
+.cell[data-value="8"] {
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #695de0,
+            #5542b6
+        );
+
+    box-shadow:
+        0 0 22px
+        rgba(117,93,255,0.28);
+}
+
+
+.cell[data-value="16"] {
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #586ce6,
+            #4551b5
+        );
+
+    box-shadow:
+        0 0 25px
+        rgba(87,126,255,0.30);
+}
+
+
+.cell[data-value="32"] {
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #4c9de9,
+            #3974bd
+        );
+
+    box-shadow:
+        0 0 27px
+        rgba(67,174,255,0.32);
+}
+
+
+/* ============================================================
+   67
+============================================================ */
+
+.cell[data-value="67"] {
+
+    font-size:
+        clamp(
+            19px,
+            6.5vw,
+            34px
+        );
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #6d5ae7,
+            #b65cff 45%,
+            #49d8f5
+        );
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.35
+        );
+
+    box-shadow:
+
+        0 0 35px
+        rgba(
+            126,
+            91,
+            255,
+            0.55
+        );
+}
+
+
+/* ============================================================
+   HIGHER TILES
+============================================================ */
+
+.cell[data-value="128"] {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #6c6cff,
+            #9b5cff
+        );
+
+    box-shadow:
+        0 0 32px
+        rgba(143,98,255,0.55);
+}
+
+
+.cell[data-value="256"] {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #8158ff,
+            #d75cff
+        );
+
+    box-shadow:
+        0 0 35px
+        rgba(190,90,255,0.55);
+}
+
+
+.cell[data-value="512"] {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #8f5aff,
+            #f15cff
+        );
+
+    box-shadow:
+        0 0 38px
+        rgba(216,92,255,0.60);
+}
+
+
+.cell[data-value="1024"] {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #ae5cff,
+            #ff6bdc
+        );
+
+    box-shadow:
+        0 0 42px
+        rgba(230,96,255,0.65);
+}
+
+
+.cell[data-value="2048"] {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #c46cff,
+            #66dfff
+        );
+
+    box-shadow:
+        0 0 50px
+        rgba(179,112,255,0.75);
+}
+
+
+/* ============================================================
+   MOVEMENT
+============================================================ */
+
+.slide-up {
+
+    animation:
+        slideUp
+        0.16s
+        ease-out;
+}
+
+
+.slide-down {
+
+    animation:
+        slideDown
+        0.16s
+        ease-out;
+}
+
+
+.slide-left {
+
+    animation:
+        slideLeft
+        0.16s
+        ease-out;
+}
+
+
+.slide-right {
+
+    animation:
+        slideRight
+        0.16s
+        ease-out;
+}
+
+
+/* ============================================================
+   SPAWN
+============================================================ */
+
+.tile-spawn {
+
+    animation:
+        tileSpawn
+        0.20s
+        cubic-bezier(
+            .2,
+            1.5,
+            .4,
+            1
+        );
+}
+
+
+/* ============================================================
+   NORMAL MERGE
+============================================================ */
+
+.merge-pop {
+
+    z-index: 2;
+
+    animation:
+        mergePop
+        0.30s
+        cubic-bezier(
+            .2,
+            1.5,
+            .4,
+            1
+        );
+}
+
+
+/* ============================================================
+   SPECIAL MERGE
+============================================================ */
+
+.special-merge {
+
+    z-index: 5;
+
+    animation:
+        specialMerge
+        0.72s
+        cubic-bezier(
+            .16,
+            1.4,
+            .3,
+            1
+        );
+}
+
+
+/* ============================================================
+   GAME FOOTER
+============================================================ */
+
+.game-footer {
+
+    color: #817ba4;
+
+    font-size: 10px;
+
+    letter-spacing: 0.8px;
+
+    text-align: center;
+}
+
+
+.game-footer b {
+
+    color: #bcb2ff;
+}
+
+
+/* ============================================================
+   GAME OVER
+============================================================ */
+
+.game-over {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 100;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    border-radius: 28px;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            rgba(92, 70, 174, 0.38),
+            rgba(8, 7, 25, 0.94) 72%
+        );
+
+    backdrop-filter: blur(14px);
+
+    -webkit-backdrop-filter: blur(14px);
+
+    animation:
+        overlayAppear
+        0.35s
+        ease-out;
+}
+
+
+.game-over-content {
+
+    width: min(
+        370px,
+        100%
+    );
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    text-align: center;
+
+    padding:
+        20px
+        10px;
+
+    animation:
+        gameOverContent
+        0.55s
+        cubic-bezier(
+            .16,
+            1.2,
+            .3,
+            1
+        );
+}
+
+
+/* ------------------------------------------------------------
+   CLOSE
+------------------------------------------------------------ */
+
+.close-button {
+
+    position: absolute;
+
+    top: 17px;
+    left: 17px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 7px 9px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #bcb5dc;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.close-button span {
+
+    font-size: 22px;
+
+    line-height: 1;
+}
+
+
+.close-button small {
+
+    font-size: 9px;
+
+    letter-spacing: 1.5px;
+
+    font-weight: 700;
+}
+
+
+.close-button:hover {
+
+    color: white;
+
+    transform:
+        translateX(-3px);
+}
+
+
+/* ------------------------------------------------------------
+   SYMBOL
+------------------------------------------------------------ */
+
+.game-over-symbol {
+
+    width: 72px;
+    height: 72px;
+
+    margin-bottom: 17px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: white;
+
+    font-size: 36px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #7657ed,
+            #51cfff
+        );
+
+    box-shadow:
+
+        0 0 45px
+        rgba(
+            125,
+            93,
+            255,
+            0.45
+        );
+
+    animation:
+        symbolFloat
+        2.5s
+        ease-in-out
+        infinite;
+}
+
+
+/* ------------------------------------------------------------
+   TITLE
+------------------------------------------------------------ */
+
+#text-game_over {
+
+    font-family:
+        "Fredoka",
+        sans-serif;
+
+    font-size:
+        clamp(
+            36px,
+            10vw,
+            52px
+        );
+
+    line-height: 1;
+
+    letter-spacing: -1px;
+}
+
+
+.game-over.win #text-game_over {
+
+    background:
+
+        linear-gradient(
+            110deg,
+            white,
+            #bba9ff,
+            #64dcff
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    color: transparent;
+}
+
+
+.game-over.lose #text-game_over {
+
+    color: #ded9f3;
+}
+
+
+#game-over-subtitle {
+
+    margin-top: 9px;
+    margin-bottom: 21px;
+
+    color: #aaa4c9;
+
+    font-size: 13px;
+}
+
+
+/* ============================================================
+   VIDEO
+============================================================ */
+
+.video-wrapper {
+
+    width: 100%;
+
+    max-height: 200px;
+
+    margin-bottom: 22px;
+
+    overflow: hidden;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    background: #050510;
+
+    border:
+        1px solid
+        rgba(
+            190,
+            175,
+            255,
+            0.18
+        );
+
+    box-shadow:
+
+        0 15px 35px
+        rgba(0,0,0,0.40);
+}
+
+
+.game-over-video {
+
+    display: block;
+
+    width: 100%;
+
+    max-height: 200px;
+
+    object-fit: cover;
+}
+
+
+/* ============================================================
+   ANIMATIONS
+============================================================ */
+
+@keyframes screenAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(18px)
+            scale(0.97);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+@keyframes orbFloat {
+
+    from {
+
+        transform:
+            translate3d(
+                0,
+                0,
+                0
+            )
+            scale(1);
+    }
+
+    to {
+
+        transform:
+            translate3d(
+                15px,
+                -20px,
+                0
+            )
+            scale(1.08);
+    }
+}
+
+
+@keyframes sparkleFloat {
+
+    from {
+
+        transform:
+            translateY(0)
+            scale(0.9);
+
+        opacity: 0.22;
+    }
+
+    to {
+
+        transform:
+            translateY(-11px)
+            scale(1.18);
+
+        opacity: 0.68;
+    }
+}
+
+
+/* ------------------------------------------------------------
+   SLIDE
+------------------------------------------------------------ */
+
+@keyframes slideUp {
+
+    from {
+
+        transform:
+            translateY(13px);
+
+        opacity: 0.72;
+    }
+
+    to {
+
+        transform:
+            translateY(0);
+
+        opacity: 1;
+    }
+}
+
+
+@keyframes slideDown {
+
+    from {
+
+        transform:
+            translateY(-13px);
+
+        opacity: 0.72;
+    }
+
+    to {
+
+        transform:
+            translateY(0);
+
+        opacity: 1;
+    }
+}
+
+
+@keyframes slideLeft {
+
+    from {
+
+        transform:
+            translateX(13px);
+
+        opacity: 0.72;
+    }
+
+    to {
+
+        transform:
+            translateX(0);
+
+        opacity: 1;
+    }
+}
+
+
+@keyframes slideRight {
+
+    from {
+
+        transform:
+            translateX(-13px);
+
+        opacity: 0.72;
+    }
+
+    to {
+
+        transform:
+            translateX(0);
+
+        opacity: 1;
+    }
+}
+
+
+/* ------------------------------------------------------------
+   SPAWN
+------------------------------------------------------------ */
+
+@keyframes tileSpawn {
+
+    from {
+
+        transform:
+            scale(0);
+
+        opacity: 0;
+    }
+
+    to {
+
+        transform:
+            scale(1);
+
+        opacity: 1;
+    }
+}
+
+
+/* ------------------------------------------------------------
+   MERGE
+------------------------------------------------------------ */
+
+@keyframes mergePop {
+
+    0% {
+
+        transform:
+            scale(0.88);
+    }
+
+    45% {
+
+        transform:
+            scale(1.17);
+    }
+
+    72% {
+
+        transform:
+            scale(0.96);
+    }
+
+    100% {
+
+        transform:
+            scale(1);
+    }
+}
+
+
+/* ------------------------------------------------------------
+   SPECIAL MERGE
+------------------------------------------------------------ */
+
+@keyframes specialMerge {
+
+    0% {
+
+        transform:
+            scale(0.70);
+
+        filter:
+            brightness(1);
+
+        box-shadow:
+            0 0 0
+            rgba(130,100,255,0);
+    }
+
+    32% {
+
+        transform:
+            scale(1.25);
+
+        filter:
+            brightness(1.5);
+
+        box-shadow:
+
+            0 0 60px
+            rgba(133,102,255,0.9),
+
+            0 0 18px
+            rgba(255,255,255,0.55);
+    }
+
+    58% {
+
+        transform:
+            scale(0.94);
+
+        filter:
+            brightness(1.15);
+    }
+
+    100% {
+
+        transform:
+            scale(1);
+
+        filter:
+            brightness(1);
+    }
+}
+
+
+/* ------------------------------------------------------------
+   GAME OVER
+------------------------------------------------------------ */
+
+@keyframes overlayAppear {
+
+    from {
+
+        opacity: 0;
+
+        backdrop-filter:
+            blur(0);
+    }
+
+    to {
+
+        opacity: 1;
+
+        backdrop-filter:
+            blur(14px);
+    }
+}
+
+
+@keyframes gameOverContent {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px)
+            scale(0.90);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+@keyframes symbolFloat {
+
+    0%,
+    100% {
+
+        transform:
+            translateY(0);
+    }
+
+    50% {
+
+        transform:
+            translateY(-5px);
+    }
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 500px) {
+
+    body {
+
+        padding: 8px;
+    }
+
+
+    .app-container {
+
+        max-width: 100%;
+    }
+
+
+    .screen-card {
+
+        border-radius: 24px;
+    }
+
+
+    #screen-game {
+
+        padding:
+            18px
+            15px;
+    }
+
+
+    #board {
+
+        gap: 7px;
+
+        padding: 8px;
+
+        border-radius: 20px;
+    }
+
+
+    .cell {
+
+        border-radius: 13px;
+    }
+
+
+    .game-title {
+
+        font-size: 34px;
+    }
+
+
+    .score-container {
+
+        min-width: 82px;
+
+        padding:
+            6px
+            10px;
+    }
+
+
+    #score {
+
+        font-size: 18px;
+    }
+
+
+    .menu-button {
+
+        padding:
+            7px
+            8px;
+    }
+
+
+    .menu-button span:last-child {
+
+        display: none;
+    }
+
+
+    .menu-arrow {
+
+        font-size: 21px;
+    }
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        animation-duration:
+            0.01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            0.01ms !important;
+    }
 }

@@ -1,47 +1,221 @@
 <!doctype html>
 <html lang="it">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--? Better rendering for mobile devices -->
-        <title>2048</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <div id="screen-menu">
-            <h1>2048</h1>
-            <h4>By Cavalli 🐎</h4>
-            <button id="button-play" style="background-color: yellow">PLAY</button>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>2048 — By Cavalli</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+
+    <!-- =====================================================
+         BACKGROUND DECORATION
+    ====================================================== -->
+
+    <div class="background-decor">
+
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+
+        <span class="sparkle sparkle-1">✦</span>
+        <span class="sparkle sparkle-2">✧</span>
+        <span class="sparkle sparkle-3">✦</span>
+        <span class="sparkle sparkle-4">✧</span>
+
+    </div>
+
+
+    <!-- =====================================================
+         APPLICATION
+    ====================================================== -->
+
+    <main class="app-container">
+
+
+        <!-- =================================================
+             MENU
+        ================================================== -->
+
+        <div id="screen-menu" class="screen-card">
+
+            <div class="menu-content">
+
+                <div class="game-logo">
+                    <span>20</span><span>48</span>
+                </div>
+
+                <div class="logo-sparkle">✦</div>
+
+                <h4>BY CAVALLI 🐎</h4>
+
+                <p class="menu-subtitle">
+                    Slide · Merge · Reach the top
+                </p>
+
+                <button id="button-play" class="main-button">
+
+                    <span>PLAY</span>
+
+                    <span class="play-icon">▶</span>
+
+                </button>
+
+            </div>
+
         </div>
 
-        <div id="screen-game" class="hidden">
-            <h3 id="score"></h3>
+
+        <!-- =================================================
+             GAME
+        ================================================== -->
+
+        <div id="screen-game" class="screen-card hidden">
+
+            <header class="game-header">
+
+                <button id="btn-back-menu" class="menu-button">
+                    <span class="menu-arrow">←</span>
+                    <span>MENU</span>
+                </button>
+
+
+                <div class="game-title">
+                    <span>20</span><span>48</span>
+                </div>
+
+
+                <div class="score-container">
+
+                    <span class="score-label">
+                        SCORE
+                    </span>
+
+                    <span id="score">
+                        0
+                    </span>
+
+                </div>
+
+            </header>
+
+
+            <p class="game-hint">
+                Use <b>arrow keys</b> or <b>swipe</b>
+            </p>
+
+
+            <!-- =============================================
+                 BOARD
+            ============================================== -->
+
             <div id="board">
+
                 <div id="block-0" class="cell"></div>
                 <div id="block-1" class="cell"></div>
                 <div id="block-2" class="cell"></div>
                 <div id="block-3" class="cell"></div>
+
                 <div id="block-4" class="cell"></div>
                 <div id="block-5" class="cell"></div>
                 <div id="block-6" class="cell"></div>
                 <div id="block-7" class="cell"></div>
+
                 <div id="block-8" class="cell"></div>
                 <div id="block-9" class="cell"></div>
                 <div id="block-10" class="cell"></div>
                 <div id="block-11" class="cell"></div>
+
                 <div id="block-12" class="cell"></div>
                 <div id="block-13" class="cell"></div>
                 <div id="block-14" class="cell"></div>
                 <div id="block-15" class="cell"></div>
+
             </div>
 
-            <div id="screen-game_over" class="hidden">
-                <button id="close-overlay">✕</button>
-                <button id="button-play_again" style="background-color: yellow"> PLAY AGAIN </button>
-                <h3 id="text-game_over"></h3>
+
+            <p class="game-footer">
+                Merge the tiles and reach <b>2048</b>
+            </p>
+
+
+            <!-- =============================================
+                 GAME OVER / VICTORY
+            ============================================== -->
+
+            <div id="screen-game_over" class="game-over hidden">
+
+                <div class="game-over-content">
+
+
+                    <button id="close-overlay" class="close-button">
+
+                        <span>←</span>
+                        <small>MENU</small>
+
+                    </button>
+
+
+                    <div class="game-over-symbol">
+                        ✦
+                    </div>
+
+
+                    <h2 id="text-game_over">
+                        Hai vinto!
+                    </h2>
+
+
+                    <p id="game-over-subtitle">
+                        Hai raggiunto 67!
+                    </p>
+
+
+                    <!--
+                        Il contenitore è nascosto finché non
+                        inserisci un video.
+
+                        Quando avrai il file basta mettere
+                        src="assets/game_over.mp4"
+                        sull'elemento video.
+                    -->
+
+                    <div id="video-container" class="video-wrapper hidden">
+
+                        <video
+                            id="game-over-video"
+                            class="game-over-video"
+                            playsinline
+                            controls
+                            loop>
+                        </video>
+
+                    </div>
+
+
+                    <button
+                        id="button-play_again"
+                        class="main-button">
+
+                        PLAY AGAIN
+
+                    </button>
+
+                </div>
+
             </div>
+
         </div>
 
-        <script type="module" src="script.js"></script>
-    </body>
+    </main>
+
+
+    <script type="module" src="script.js"></script>
+
+</body>
+
 </html>
