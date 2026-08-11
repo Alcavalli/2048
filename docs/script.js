@@ -8,6 +8,7 @@ let btn_close = document.getElementById("close-overlay");
 let text_game_over = document.getElementById("text-game_over");
 let blocks = document.querySelectorAll(".cell");
 let score = document.getElementById("score");
+let start_x = null, start_y = null, end_x = null, end_y = null;
 
 {
     btn_play.addEventListener("click", () => { renderGame(); });
@@ -15,22 +16,52 @@ let score = document.getElementById("score");
     btn_close.addEventListener("click", () => { renderMenu(); });
     renderMenu();
     document.addEventListener("keydown", (event) => {
-    const keyToSwipe = {
-        "ArrowUp": 0,
-        "ArrowDown": 1,
-        "ArrowRight": 2,
-        "ArrowLeft": 3
-    };
+        const keyToSwipe = {
+            "ArrowUp": 0,
+            "ArrowDown": 1,
+            "ArrowRight": 2,
+            "ArrowLeft": 3
+        };
 
-    let get_run = "";
-    if (event.key in keyToSwipe)
-    {
-        event.preventDefault();
-        get_run = Module.runGame(keyToSwipe[event.key]);
-        renderBoard();
-        if (get_run === "Win" || get_run === "Lose")    renderGameOver(get_run);
-    }
-});
+        let get_run = "";
+        if (event.key in keyToSwipe)
+        {
+            event.preventDefault();
+            get_run = Module.runGame(keyToSwipe[event.key]);
+            renderBoard();
+            if (get_run === "Win" || get_run === "Lose")    renderGameOver(get_run);
+        }
+    });
+    document.addEventListener("touchstart", (event) => {
+        start_x = event.touches[0].clientX;
+        start_y = event.touches[0].clientY;
+    });
+    document.addEventListener("touchend", (event) => {
+        end_x = event.changedTouches[0].clientX;
+        end_y = event.changedTouches[0].clientY;
+        let i = null;
+        let get_run = "";
+        let diff_x = end_x - start_x;
+        let diff_y = end_y - start_y;
+
+        if (Math.abs(diff_x) > 30 || Math.abs(diff_y) > 30)
+        {
+            if (Math.abs(diff_x) >= Math.abs(diff_y))   //* se dovessero essere uguali si agevola l'asse X
+            {
+                if (diff_x > 0)     i = 2;
+                else    i = 3;
+            }
+            else
+            {
+                if (diff_y > 0)     i = 1;
+                else    i = 0;
+            }
+
+            get_run = Module.runGame(i);
+            renderBoard();
+            if (get_run === "Win" || get_run === "Lose")    renderGameOver(get_run);
+        }
+    });
 }
 
 function renderMenu()
