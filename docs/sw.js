@@ -1,7 +1,7 @@
 // Incrementa questo numero ogni volta che rilasci una nuova versione
 // del gioco: forza i client a scaricare i file aggiornati invece di
 // restare bloccati sulla cache vecchia.
-const CACHE_NAME = "game2048-v1";
+const CACHE_NAME = "game2048-v2";
 
 const ASSETS_TO_CACHE = [
     "./",
