@@ -17,9 +17,6 @@ const btn_back_menu = document.getElementById("btn-back-menu");
 const text_game_over = document.getElementById("text-game_over");
 const game_over_subtitle = document.getElementById("game-over-subtitle");
 
-const gameOverVideo = document.getElementById("game-over-video");
-const videoContainer = document.getElementById("video-container");
-
 const blocks = document.querySelectorAll(".cell");
 const score = document.getElementById("score");
 
@@ -62,25 +59,9 @@ let mergedValues = new Set();
 const SoundSystem = {
 
     /*
-     * Quando avrai i tuoi file puoi mettere, ad esempio:
-     *
-     * start: "assets/start.mp3"
-     * merge: "assets/merge.mp3"
-     * newTile: "assets/new_tile.mp3"
-     * win: "assets/win.mp3"
-     * lose: "assets/lose.mp3"
-     *
-     * Se rimangono null, viene usato il sintetizzatore.
-     */
-
-    files: {
-        start: null,
-        merge: null,
-        newTile: null,
-        win: null,
-        lose: null
-    },
-
+    * Suoni generati via sintetizzatore (Web Audio API) —
+    * nessun file audio esterno.
+    */
 
     audioCtx: null,
 
@@ -111,23 +92,6 @@ const SoundSystem = {
     play(type, tileValue = 0) {
 
         this.init();
-
-
-        /*
-         * Se esiste un file personalizzato,
-         * usiamo quello.
-         */
-
-        if (this.files[type])
-        {
-            const audio = new Audio(this.files[type]);
-
-            audio.volume = 0.65;
-
-            audio.play().catch(() => {});
-
-            return;
-        }
 
 
         /*
@@ -539,12 +503,6 @@ document.addEventListener("touchend", (event) => {
 function renderMenu()
 {
     showScreen("menu");
-
-
-    if (gameOverVideo)
-    {
-        gameOverVideo.pause();
-    }
 }
 
 
@@ -555,12 +513,6 @@ function renderMenu()
 function renderGame()
 {
     showScreen("game");
-
-
-    if (gameOverVideo)
-    {
-        gameOverVideo.pause();
-    }
 
 
     Module.startGame();
@@ -801,10 +753,7 @@ function renderGameOver(result)
             "Hai vinto!";
 
 
-        document
-            .getElementById("game-over-subtitle")
-            .textContent =
-            "Hai raggiunto 2048!";
+        game_over_subtitle.textContent = "Hai raggiunto 2048!";
 
 
         sc_game_over.classList.remove(
@@ -830,14 +779,10 @@ function renderGameOver(result)
 
     else
     {
-        text_game_over.textContent =
-            "Game Over";
+        text_game_over.textContent = "Game Over";
 
 
-        document
-            .getElementById("game-over-subtitle")
-            .textContent =
-            "La board è piena...";
+        game_over_subtitle.textContent = "La board è piena...";
 
 
         sc_game_over.classList.remove(
@@ -853,28 +798,6 @@ function renderGameOver(result)
 
 
         vibrate(120);
-    }
-
-
-    // --------------------------------------------------------
-    // VIDEO
-    // --------------------------------------------------------
-
-    /*
-     * Il video verrà gestito qui quando
-     * aggiungerai il file.
-     */
-
-    if (
-        gameOverVideo &&
-        gameOverVideo.src
-    )
-    {
-        gameOverVideo.currentTime = 0;
-
-        gameOverVideo
-            .play()
-            .catch(() => {});
     }
 
 
@@ -923,6 +846,13 @@ function showScreen(id)
             "hidden"
         );
     }
+}
+
+if ("serviceWorker" in navigator)
+{
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+    });
 }
 
 

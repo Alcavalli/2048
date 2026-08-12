@@ -8,6 +8,14 @@
     <title>2048 — By Cavalli</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#08081a">
+    <link rel="icon" href="assets/icons/icon-192.png">
+    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
 </head>
 
 
@@ -164,38 +172,14 @@
                         ✦
                     </div>
 
-
                     <h2 id="text-game_over">
                         Hai vinto!
                     </h2>
 
 
                     <p id="game-over-subtitle">
-                        Hai raggiunto 67!
+                        Hai raggiunto 2048!
                     </p>
-
-
-                    <!--
-                        Il contenitore è nascosto finché non
-                        inserisci un video.
-
-                        Quando avrai il file basta mettere
-                        src="assets/game_over.mp4"
-                        sull'elemento video.
-                    -->
-
-                    <div id="video-container" class="video-wrapper hidden">
-
-                        <video
-                            id="game-over-video"
-                            class="game-over-video"
-                            playsinline
-                            controls
-                            loop>
-                        </video>
-
-                    </div>
-
 
                     <button
                         id="button-play_again"
