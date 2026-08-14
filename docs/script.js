@@ -19,6 +19,7 @@ const game_over_subtitle = document.getElementById("game-over-subtitle");
 
 const blocks = document.querySelectorAll(".cell");
 const score = document.getElementById("score");
+const final_score = document.getElementById("final-score");
 
 
 // ============================================================
@@ -800,6 +801,7 @@ function renderGameOver(result)
         vibrate(120);
     }
 
+    final_score.textContent = Module.getScore().toLocaleString("it-IT");
 
     sc_game_over.classList.remove(
         "hidden"
